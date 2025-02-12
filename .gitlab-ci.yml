@@ -1,0 +1,28 @@
+image: node:latest
+
+stages:
+  - validate
+  - deploy
+
+before_script:
+  - npm install -g htmlhint
+
+validate_html:
+  stage: validate
+  script:
+    - htmlhint index.html || exit 1
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - cp -r * public/
+    - mv public/index.html public/404.html # GitLab Pages needs this for routing
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+
